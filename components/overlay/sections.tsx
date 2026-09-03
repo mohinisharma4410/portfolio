@@ -122,7 +122,7 @@ function Eyebrow({ children }: { children: ReactNode }) {
 
 function Chip({ children }: { children: ReactNode }) {
   return (
-    <span className="rounded-full border border-ink/25 px-3 py-1 text-xs font-medium text-ink/70">
+    <span className="rounded-full border border-ink/25 dark:border-ink/40 px-3 py-1 text-xs font-medium text-ink/70 dark:text-ink/85">
       {children}
     </span>
   )
@@ -138,10 +138,10 @@ function TechBadge({ name, seed }: { name: string; seed: number }) {
 
   return (
     <span
-      className="group inline-flex items-center gap-2 rounded-2xl border border-ink/15 bg-paper/60 px-3 py-2 text-xs font-medium text-ink/75 transition-colors duration-200 hover:border-accent/50 hover:text-accent"
+      className="group inline-flex items-center gap-2 rounded-2xl border border-ink/15 dark:border-ink/30 bg-paper/60 dark:bg-paper/85 px-3 py-2 text-xs font-medium text-ink/75 dark:text-ink/90 transition-colors duration-200 hover:border-accent/50 hover:text-accent"
       style={{ transform: `rotate(${tilt * 0.4}deg)` }}
     >
-      {Icon && <Icon className="h-4 w-4 shrink-0 text-ink/60 transition-colors duration-200 group-hover:text-accent" />}
+      {Icon && <Icon className="h-4 w-4 shrink-0 text-ink/60 dark:text-ink/80 transition-colors duration-200 group-hover:text-accent" />}
       {name}
     </span>
   )
@@ -168,7 +168,7 @@ export function Sections() {
 
       {/* ABOUT */}
       <Panel anchor={0.2} align="right">
-        <div className="rounded-3xl border border-ink/10 bg-paper/70 p-6 backdrop-blur-sm md:p-8">
+        <div className="rounded-3xl border border-ink/10 dark:border-ink/25 bg-paper/70 dark:bg-paper/92 p-6 backdrop-blur-sm md:p-8">
           <Eyebrow>About</Eyebrow>
           <h2 className="font-hand text-4xl text-ink md:text-5xl">A quick sketch of me</h2>
           <p className="mt-4 text-pretty text-sm leading-relaxed text-ink/70">
@@ -205,7 +205,7 @@ export function Sections() {
 
       {/* TECH STACK */}
       <Panel anchor={0.3} align="center" maxWidth="max-w-3xl">
-        <div className="rounded-3xl border border-ink/10 bg-paper/70 p-6 backdrop-blur-sm md:p-8">
+        <div className="rounded-3xl border border-ink/10 dark:border-ink/25 bg-paper/70 dark:bg-paper/92 p-6 backdrop-blur-sm md:p-8">
           <Eyebrow>
             <span className="mx-auto">Tech Stack</span>
           </Eyebrow>
@@ -255,7 +255,7 @@ export function Sections() {
         const align: Align = p.side === "left" ? "right" : "left"
         return (
           <Panel key={p.id} anchor={anchor} align={align}>
-            <div className="rounded-3xl border border-ink/10 bg-paper/70 p-6 backdrop-blur-sm md:p-8">
+            <div className="rounded-3xl border border-ink/10 dark:border-ink/25 bg-paper/70 dark:bg-paper/92 p-6 backdrop-blur-sm md:p-8">
               <Eyebrow>{p.kind}</Eyebrow>
               <h2 className="font-hand text-4xl text-ink md:text-5xl">{p.title}</h2>
               <p className="mt-3 text-pretty text-sm leading-relaxed text-ink/70">

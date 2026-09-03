@@ -65,8 +65,10 @@ const fragmentShader = /* glsl */ `
     float front = smoothstep(uProgress - 0.02, uProgress, base) * (1.0 - smoothstep(uProgress, uProgress + 0.06, base));
     color = mix(color, color * 0.82, front * 0.6);
 
-    // dimmed under the studio lights being off — keeps hue, just darker
-    color *= mix(1.0, 0.62, uDark);
+    // dimmed under the studio lights being off — keeps hue, just darker.
+    // Kept gentle on purpose: the illustrations are the actual content,
+    // so they stay legible instead of getting crushed into the dark bg.
+    color *= mix(1.0, 0.88, uDark);
 
     float alpha = tex.a * clamp(mask, 0.0, 1.0);
     if (alpha < 0.01) discard;
@@ -102,8 +104,8 @@ function wobblyRect(w: number, h: number, jitter: number, seed: number) {
   return pts
 }
 
-const MAT_COLOR = { light: "#efe7d4", dark: "#221e17" }
-const FRAME_COLOR = { light: "#2a2622", dark: "#d8d0bd" }
+const MAT_COLOR = { light: "#efe7d4", dark: "#2c2219" }
+const FRAME_COLOR = { light: "#2a2622", dark: "#e3ddd3" }
 
 export function FramedIllustration({
   image,

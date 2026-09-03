@@ -14,8 +14,8 @@ const WALL_X = HALF_W - 0.18
 
 const LIGHT_CLEAR = "#f2ead9"
 const LIGHT_FOG = "#efe6d2"
-const DARK_CLEAR = "#1c1912"
-const DARK_FOG = "#1c1912"
+const DARK_CLEAR = "#0a0502"
+const DARK_FOG = "#0a0502"
 
 // Establishing illustrations that aren't in PROJECTS
 const INTRO_PIECES = [

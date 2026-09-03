@@ -104,10 +104,15 @@
   color-scheme: dark;
 
   /* hand-drawn editorial palette, inverted — deep warm charcoal "paper"
-     with cream "ink", instead of a generic neutral gray */
-  --paper: oklch(0.16 0.018 60);
-  --ink: oklch(0.92 0.015 85);
-  --accent-warm: oklch(0.72 0.15 55);
+     with cream "ink". Values are deliberately NOT a flat mirror of the
+     light palette: dark tones need a wider lightness spread than light
+     ones to read as equally differentiated (the eye resolves far fewer
+     steps at the dark end), so paper goes darker and ink goes brighter
+     than a naive inversion would. */
+  --paper: oklch(0.12 0.016 60);
+  --ink: oklch(0.96 0.01 85);
+  --accent-warm: oklch(0.74 0.16 55);
+  --pullcord-ink: color-mix(in oklab, var(--ink) 65%, transparent);
 
   --background: var(--paper);
   --foreground: var(--ink);
@@ -145,9 +150,10 @@
 @media (prefers-color-scheme: dark) {
   :root:not(.light) {
     color-scheme: dark;
-    --paper: oklch(0.16 0.018 60);
-    --ink: oklch(0.92 0.015 85);
-    --accent-warm: oklch(0.72 0.15 55);
+    --paper: oklch(0.12 0.016 60);
+    --ink: oklch(0.96 0.01 85);
+    --accent-warm: oklch(0.74 0.16 55);
+    --pullcord-ink: color-mix(in oklab, var(--ink) 65%, transparent);
     --background: var(--paper);
     --foreground: var(--ink);
     --card: oklch(0.205 0 0);

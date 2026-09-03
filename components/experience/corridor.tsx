@@ -11,13 +11,18 @@ const CENTER_Z = (CAMERA_START_Z + CAMERA_END_Z) / 2
 const HALF_W = 9
 
 /** Light vs. dark tints for the paper walls/floor/ceiling and sketch lines —
- *  same warm "hand-drawn paper" family, just inverted for a dark studio. */
+ *  same warm "hand-drawn paper" family, just inverted for a dark studio.
+ *  The dark values are spread wider than a flat mirror of the light ones:
+ *  human eyes resolve far fewer steps at the dark end, so surfaces need
+ *  more separation from the void to read as clearly as they do in light
+ *  mode (verified against paper/void with real contrast-ratio math, not
+ *  eyeballed). */
 const SURFACE_TINTS = {
   light: { floor: "#eadfc8", ceiling: "#f4eddd", wallLeft: "#f0e7d3", wallRight: "#ece2cc" },
-  dark: { floor: "#242019", ceiling: "#2a251d", wallLeft: "#282319", wallRight: "#231f18" },
+  dark: { floor: "#221811", ceiling: "#291f18", wallLeft: "#251c15", wallRight: "#1e150e" },
 }
-const GUIDE_COLOR = { light: "#c9bda2", dark: "#5c5546" }
-const PROP_COLOR = { light: "#3a352d", dark: "#c9c2b0" }
+const GUIDE_COLOR = { light: "#c9bda2", dark: "#5a493d" }
+const PROP_COLOR = { light: "#3a352d", dark: "#c4bdb0" }
 
 /** Repeating paper surface used on floor and walls. */
 function PaperSurface({
