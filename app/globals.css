@@ -93,11 +93,25 @@
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
 
-  /* pull-cord — hangs top center, rope tinted to match the ink */
-  --pullcord-top: 0px;
-  --pullcord-right: calc(50% - 32px);
+  /* pull-cord + lamp fixture — anchored to the left edge, below the logo.
+     That strip is genuinely empty all the way down to the bottom progress
+     bar (unlike top-center, which shares an axis with your centered
+     headings, or top-right, which is boxed in by the "Open to roles"
+     badge above and the section-nav dots starting around mid-viewport).
+     --pullcord-left-offset is the single shared anchor: the lamp SVG reads
+     it directly, and pullcord's own right-only positioning system derives
+     its offset from it via calc(), so the two can never drift apart. */
+  --pullcord-left-offset: 1.5rem; /* matches Nav logo's left-6 */
+  --pullcord-top: 6.5rem;
+  --pullcord-right: calc(100vw - var(--pullcord-left-offset) - 64px);
   --pullcord-z: 41;
   --pullcord-ink: color-mix(in oklab, var(--ink) 55%, transparent);
+}
+
+@media (min-width: 768px) {
+  :root {
+    --pullcord-left-offset: 2.5rem; /* matches Nav logo's md:left-10 */
+  }
 }
 
 .dark {
