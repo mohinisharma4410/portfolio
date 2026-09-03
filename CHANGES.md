@@ -1,63 +1,53 @@
-# pullcord + dark mode — change set
+# Tech Stack section — change set
 
-This is a **partial drop-in**, not the full project. Copy these files into your
-project at the same paths (overwrite the existing ones), then run your
-install command again so `pullcord` gets pulled in:
+Copy these 3 files into your project at the same paths (overwrite the
+existing ones), then reinstall so `react-icons` gets pulled in:
 
 ```bash
 pnpm install   # or npm install / yarn
 ```
 
-## Files
+## What changed
 
-- `package.json` — added the `pullcord` dependency.
-- `lib/theme.ts` — **new.** Tiny shared theme store: toggles `.dark`/`.light`
-  on `<html>`, persists the choice to `localStorage`, and exposes
-  `useIsDark()` so any component (the cord, the 3D scene) can react to it.
-- `components/overlay/theme-cord.tsx` — **new.** Wraps `pullcord`'s
-  `<PullCord>` and wires `onPull` to the theme store.
-- `app/page.tsx` — mounts `<ThemeCord />` alongside the other overlay
-  components.
-- `app/layout.tsx` — adds a tiny inline script that sets the theme class
-  *before* first paint (so there's no flash of the wrong theme on load), and
-  makes the mobile browser bar color follow the theme.
-- `app/globals.css` — your `.dark` class already existed but wasn't doing
-  much: 34+ places in the UI use the custom `--ink` / `--paper` /
-  `--accent-warm` tokens directly, and those were never defined for dark
-  mode. Added dark variants for all three (and for the
-  `prefers-color-scheme` fallback, so it's consistent even before any JS
-  runs). Also added a smooth color transition on `<body>`, and positioned
-  the cord (see below).
-- `components/experience/scene.tsx`, `corridor.tsx`,
-  `framed-illustration.tsx` — the WebGL corridor's background, fog, walls,
-  floor, and picture-frame colors were all hardcoded hex values, so pulling
-  the cord wouldn't have changed anything in the 3D scene at all. These now
-  take a `dark` flag and crossfade the canvas clear color / fog / wall
-  tints when you pull. The illustrations themselves keep their original
-  colors (like a painting under a dimmer light) — only slightly darkened,
-  not recolored.
+- `package.json` — added `react-icons` (for the tech logos — see below).
+- `lib/portfolio-data.ts` — added a new `TECH_STACK` export with the full
+  Languages + Frameworks & Tools list straight from your resume. Nothing
+  existing was touched (`SKILLS`, `PROJECTS`, etc. are unchanged) — the
+  original `SKILLS` object was a trimmed preview used elsewhere, so I
+  added a separate, complete list rather than editing it.
+- `components/overlay/sections.tsx` — added a new "Tech Stack" panel
+  between About and your first project (scroll anchor `0.3`), plus a
+  `TechBadge` helper and a small `maxWidth` option on the existing `Panel`
+  component (backward-compatible — every other panel is untouched and
+  still defaults to the same width as before).
 
-## Where the cord hangs
+## How it fits the scroll
 
-By default it's centered at the very top of the viewport (`--pullcord-right:
-calc(50% - 32px)`), clear of both the logo (top-left) and the "Open to
-roles" badge (top-right). If you want to move it, these live in
-`app/globals.css`:
+This site's content panels are just scroll-triggered fades — they're not
+tied 1:1 to the 3D wall illustrations, so I didn't touch the WebGL corridor,
+the camera path, or the scroll runway height at all. I placed the new panel
+at the same kind of crossfade spacing already used between your existing
+sections, so it appears, holds, and clears on its own before the first
+project panel arrives — same pacing rhythm as the rest of the site.
 
-```css
---pullcord-top: 0px;
---pullcord-right: calc(50% - 32px);
---pullcord-z: 41;
---pullcord-ink: color-mix(in oklab, var(--ink) 55%, transparent);
-```
+## The badges
+
+Not every tool has a real brand mark (Detectron2, Power BI, Azure) — those
+render as plain text badges, same shape as the rest, so the grid still lines
+up. Where a mark exists, it's a monochrome icon (from `react-icons`, MIT
+licensed) tinted with your `--ink` color and rotated a couple degrees per
+item, colorizing to your accent on hover — kept deliberately flat/mono
+rather than full-color brand logos, since multicolor logos would clash with
+the hand-drawn ink-on-paper look everywhere else on the site.
+
+I didn't add a Nav shortcut for it (left `nav.tsx` untouched per "don't
+change other content") — it's reachable by scrolling, same as everything
+else. Say the word if you'd like a "Tech" entry added to the top nav too.
 
 ## Verified
 
-`pnpm install` + `tsc --noEmit` + `next build` all pass cleanly with these
-changes (the only build error I saw was Google Fonts being unreachable from
-my sandbox — unrelated to this change, and won't happen in your normal dev
-environment).
-
-I haven't been able to see it rendered in a real browser, so it's worth a
-quick visual check — especially the WebGL corridor colors and the cord's
-position against your "Open to roles" badge on different viewport widths.
+`tsc --noEmit` and `next build` both pass cleanly with these changes (same
+as last time, the only build error I saw was Google Fonts being unreachable
+from my sandbox — unrelated, won't happen in your normal dev environment).
+I haven't seen it rendered in a real browser, so it's worth a quick visual
+pass, especially the badge grid wrapping on mobile widths.

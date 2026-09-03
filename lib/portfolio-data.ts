@@ -158,6 +158,31 @@ export const ACHIEVEMENTS = [
   "Icreate research grant (April 2024) — Anuvaad.",
 ]
 
+/** Full tech list from the resume's Skills section (SKILLS above is the
+ *  trimmed preview shown in the About panel). Used by the Tech Stack panel. */
+export const TECH_STACK = {
+  Languages: ["Python", "C++", "Dart", "JavaScript"],
+  "Frameworks & Tools": [
+    "PyTorch",
+    "YOLOv8",
+    "Detectron2",
+    "LangChain",
+    "LangGraph",
+    "OpenCV",
+    "Flask",
+    "FastAPI",
+    "React",
+    "Flutter",
+    "Streamlit",
+    "MLflow",
+    "Docker",
+    "AWS SageMaker",
+    "Power BI",
+    "Firebase",
+    "Azure",
+  ],
+}
+
 export const SECTIONS: Section[] = [
   { id: "hero", index: "00", label: "Intro", anchor: 0.0, z: 6 },
   { id: "about", index: "01", label: "About", anchor: 0.2, z: -12 },

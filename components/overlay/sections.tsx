@@ -1,6 +1,6 @@
 "use client"
 
-import type { ReactNode } from "react"
+import type { ComponentType, ReactNode } from "react"
 import { useScrollProgress, clamp01, smoothstep } from "@/lib/scroll"
 import {
   PERSON,
@@ -9,7 +9,51 @@ import {
   PROJECTS,
   SKILLS,
   ACHIEVEMENTS,
+  TECH_STACK,
 } from "@/lib/portfolio-data"
+import {
+  SiPython,
+  SiCplusplus,
+  SiDart,
+  SiJavascript,
+  SiPytorch,
+  SiYolo,
+  SiLangchain,
+  SiLanggraph,
+  SiOpencv,
+  SiFlask,
+  SiFastapi,
+  SiReact,
+  SiFlutter,
+  SiStreamlit,
+  SiMlflow,
+  SiDocker,
+  SiFirebase,
+} from "react-icons/si"
+import { DiAws } from "react-icons/di"
+
+/** Not every tool in the resume has a recognizable brand mark (Detectron2,
+ *  Power BI, Azure) — those just render as a text badge, same as the rest. */
+const TECH_ICONS: Record<string, ComponentType<{ className?: string }>> = {
+  Python: SiPython,
+  "C++": SiCplusplus,
+  Dart: SiDart,
+  JavaScript: SiJavascript,
+  PyTorch: SiPytorch,
+  YOLOv8: SiYolo,
+  LangChain: SiLangchain,
+  LangGraph: SiLanggraph,
+  OpenCV: SiOpencv,
+  Flask: SiFlask,
+  FastAPI: SiFastapi,
+  React: SiReact,
+  Flutter: SiFlutter,
+  Streamlit: SiStreamlit,
+  MLflow: SiMlflow,
+  Docker: SiDocker,
+  "AWS SageMaker": DiAws,
+  Firebase: SiFirebase,
+}
 
 type Align = "center" | "left" | "right"
 
@@ -30,12 +74,16 @@ function Panel({
   children,
   edgeIn,
   edgeOut,
+  maxWidth = "max-w-xl",
 }: {
   anchor: number
   align: Align
   children: ReactNode
   edgeIn?: number
   edgeOut?: number
+  /** Tailwind max-width class for the inner wrapper — wider panels (like a
+   *  badge grid) need more room than the narrow text blurbs. */
+  maxWidth?: string
 }) {
   const { opacity, dy, active } = useReveal(anchor, { edgeIn, edgeOut })
   if (opacity <= 0.001) return null
@@ -54,7 +102,7 @@ function Panel({
       aria-hidden={!active}
     >
       <div
-        className={`${active ? "pointer-events-auto" : ""} w-full max-w-xl`}
+        className={`${active ? "pointer-events-auto" : ""} w-full ${maxWidth}`}
         style={{ transform: `translateY(${dy * 0.12}px)` }}
       >
         {children}
@@ -76,6 +124,25 @@ function Chip({ children }: { children: ReactNode }) {
   return (
     <span className="rounded-full border border-ink/25 px-3 py-1 text-xs font-medium text-ink/70">
       {children}
+    </span>
+  )
+}
+
+/** A single tech badge — icon (when we have one) + label, with a faint
+ *  hand-placed tilt so the grid doesn't look machine-stamped. Colorizes to
+ *  the accent on hover, like ink catching warm light. */
+function TechBadge({ name, seed }: { name: string; seed: number }) {
+  const Icon = TECH_ICONS[name]
+  // deterministic tiny rotation per item, not random-per-render
+  const tilt = ((seed * 37) % 7) - 3
+
+  return (
+    <span
+      className="group inline-flex items-center gap-2 rounded-2xl border border-ink/15 bg-paper/60 px-3 py-2 text-xs font-medium text-ink/75 transition-colors duration-200 hover:border-accent/50 hover:text-accent"
+      style={{ transform: `rotate(${tilt * 0.4}deg)` }}
+    >
+      {Icon && <Icon className="h-4 w-4 shrink-0 text-ink/60 transition-colors duration-200 group-hover:text-accent" />}
+      {name}
     </span>
   )
 }
@@ -132,6 +199,51 @@ export function Sections() {
             {SKILLS["AI Domains"].slice(0, 6).map((s) => (
               <Chip key={s}>{s}</Chip>
             ))}
+          </div>
+        </div>
+      </Panel>
+
+      {/* TECH STACK */}
+      <Panel anchor={0.3} align="center" maxWidth="max-w-3xl">
+        <div className="rounded-3xl border border-ink/10 bg-paper/70 p-6 backdrop-blur-sm md:p-8">
+          <Eyebrow>
+            <span className="mx-auto">Tech Stack</span>
+          </Eyebrow>
+          <h2 className="text-center font-hand text-4xl text-ink md:text-5xl">
+            What&apos;s on the workbench
+          </h2>
+
+          <div className="mt-6">
+            <div className="text-[11px] font-medium uppercase tracking-[0.24em] text-ink/45">
+              Languages
+            </div>
+            <div className="mt-3 flex flex-wrap justify-center gap-2.5">
+              {TECH_STACK.Languages.map((t, i) => (
+                <TechBadge key={t} name={t} seed={i} />
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-6">
+            <div className="text-[11px] font-medium uppercase tracking-[0.24em] text-ink/45">
+              Frameworks &amp; Tools
+            </div>
+            <div className="mt-3 flex flex-wrap justify-center gap-2.5">
+              {TECH_STACK["Frameworks & Tools"].map((t, i) => (
+                <TechBadge key={t} name={t} seed={i} />
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-6">
+            <div className="text-[11px] font-medium uppercase tracking-[0.24em] text-ink/45">
+              AI Domains
+            </div>
+            <div className="mt-3 flex flex-wrap justify-center gap-2">
+              {SKILLS["AI Domains"].map((s) => (
+                <Chip key={s}>{s}</Chip>
+              ))}
+            </div>
           </div>
         </div>
       </Panel>
