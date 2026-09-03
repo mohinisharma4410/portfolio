@@ -27,7 +27,10 @@ export default function Page() {
       <Cursor />
 
       {/* scroll runway — drives the normalized progress that moves the camera */}
-      <div className="h-[720vh] w-full" aria-hidden />
+      {/* dvh, not vh — vh is fixed to the browser chrome's expanded height,
+          so it jitters on mobile Safari as the address bar shows/hides
+          mid-scroll; dvh tracks the actual visible viewport instead. */}
+      <div className="h-[720dvh] w-full" aria-hidden />
 
       {/* accessible, non-visual outline of the content for SEO / screen readers */}
       <div className="sr-only">

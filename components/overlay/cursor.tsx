@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
+import { prefersReducedMotion } from "@/lib/motion"
 
 /** A small hand-drawn ink cursor with a trailing ring. Desktop / fine-pointer only. */
 export function Cursor() {
@@ -12,6 +13,7 @@ export function Cursor() {
     if (!window.matchMedia("(pointer: fine)").matches) return
     setEnabled(true)
 
+    const reduceMotion = prefersReducedMotion()
     const pos = { x: window.innerWidth / 2, y: window.innerHeight / 2 }
     const ringPos = { ...pos }
     let hovering = false
@@ -26,8 +28,16 @@ export function Cursor() {
 
     let raf = 0
     const loop = () => {
-      ringPos.x += (pos.x - ringPos.x) * 0.18
-      ringPos.y += (pos.y - ringPos.y) * 0.18
+      // Snap directly to the pointer under reduced motion instead of
+      // easing/lagging behind it — a trailing "elastic" follow is its own
+      // small but real motion pattern some people find uncomfortable.
+      if (reduceMotion) {
+        ringPos.x = pos.x
+        ringPos.y = pos.y
+      } else {
+        ringPos.x += (pos.x - ringPos.x) * 0.18
+        ringPos.y += (pos.y - ringPos.y) * 0.18
+      }
       if (dot.current) {
         dot.current.style.transform = `translate(${pos.x}px, ${pos.y}px)`
       }

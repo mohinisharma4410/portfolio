@@ -5,6 +5,7 @@ import { useFrame } from "@react-three/fiber"
 import { useTexture, Line } from "@react-three/drei"
 import * as THREE from "three"
 import { CAMERA_START_Z, CAMERA_END_Z } from "@/lib/portfolio-data"
+import { usePrefersReducedMotion } from "@/lib/motion"
 
 const LENGTH = CAMERA_START_Z - CAMERA_END_Z + 30
 const CENTER_Z = (CAMERA_START_Z + CAMERA_END_Z) / 2
@@ -147,6 +148,7 @@ export function FloatingProp({
   const ref = useRef<THREE.Group>(null)
   const base = useMemo(() => new THREE.Vector3(...position), [position])
   const phase = useMemo(() => Math.random() * Math.PI * 2, [])
+  const reduceMotion = usePrefersReducedMotion()
 
   const geo = useMemo(() => {
     switch (geometry) {
@@ -168,6 +170,13 @@ export function FloatingProp({
   useFrame((state) => {
     const g = ref.current
     if (!g) return
+    if (reduceMotion) {
+      // Hold still at rest instead of continuously spinning/drifting —
+      // ambient motion with no user action behind it is exactly what
+      // reduced-motion asks sites to drop. Still visible, just not moving.
+      g.position.copy(base)
+      return
+    }
     const t = state.clock.elapsedTime
     g.rotation.x = t * speed
     g.rotation.y = t * speed * 0.7 + phase

@@ -326,6 +326,13 @@ export function Sections() {
             >
               GitHub
             </a>
+            <a
+              href="/resume.pdf"
+              download="Mohini-Sharma-Resume.pdf"
+              className="rounded-full border border-ink/30 px-6 py-3 font-hand text-lg text-ink transition-colors hover:border-accent hover:text-accent"
+            >
+              Download Resume
+            </a>
           </div>
 
           <div className="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-1 text-xs text-ink/50">

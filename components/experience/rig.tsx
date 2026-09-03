@@ -5,6 +5,7 @@ import { useFrame, useThree } from "@react-three/fiber"
 import * as THREE from "three"
 import { scroll } from "@/lib/scroll"
 import { CAMERA_START_Z, CAMERA_END_Z } from "@/lib/portfolio-data"
+import { usePrefersReducedMotion } from "@/lib/motion"
 
 type Station = { z: number; side: number }
 
@@ -18,10 +19,24 @@ export function CameraRig({
   const { camera } = useThree()
   const lookTarget = useRef(new THREE.Vector3(0, 0.5, 0))
   const smoothZ = useRef(CAMERA_START_Z)
+  const reduceMotion = usePrefersReducedMotion()
 
   useFrame((_, delta) => {
     const p = scroll.progress
     const targetZ = THREE.MathUtils.lerp(CAMERA_START_Z, CAMERA_END_Z, p)
+
+    if (reduceMotion) {
+      // Camera tracks scroll directly: no spring-smoothing lag, no
+      // auto-pan toward whichever wall is nearest, no pointer parallax.
+      // It only moves because you scrolled, exactly as much as you did.
+      smoothZ.current = targetZ
+      const camZ = smoothZ.current
+      camera.position.set(0, 0.9, camZ)
+      lookTarget.current.set(0, 0.6, camZ - 9)
+      camera.lookAt(lookTarget.current)
+      return
+    }
+
     // extra smoothing on top of Lenis for buttery camera travel
     const k = 1 - Math.pow(0.001, delta)
     smoothZ.current = THREE.MathUtils.lerp(smoothZ.current, targetZ, k)

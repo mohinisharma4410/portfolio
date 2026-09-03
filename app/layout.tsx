@@ -50,7 +50,9 @@ export const viewport: Viewport = {
     { media: '(prefers-color-scheme: light)', color: '#f2ead9' },
     { media: '(prefers-color-scheme: dark)', color: '#1c1912' },
   ],
-  userScalable: false,
+  // Explicitly allowed (was previously disabled): people who need to
+  // zoom text to read it must be able to, on any device.
+  userScalable: true,
 }
 
 export default function RootLayout({
