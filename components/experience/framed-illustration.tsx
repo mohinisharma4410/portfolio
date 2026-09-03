@@ -17,7 +17,6 @@ const fragmentShader = /* glsl */ `
   uniform sampler2D uTex;
   uniform float uProgress;
   uniform float uTime;
-  uniform float uVertical;
   varying vec2 vUv;
 
   float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
