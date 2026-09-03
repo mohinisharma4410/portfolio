@@ -102,7 +102,11 @@
      it directly, and pullcord's own right-only positioning system derives
      its offset from it via calc(), so the two can never drift apart. */
   --pullcord-left-offset: 1.5rem; /* matches Nav logo's left-6 */
-  --pullcord-top: 6.5rem;
+  /* NOTE: the lamp SVG sits 42px *above* this value (it draws the fixture
+     the rope hangs from), so clearance below the logo must be measured
+     from (pullcord-top - 42px), not from pullcord-top itself — that was
+     the bug that caused the lamp to overlap the role subtitle text. */
+  --pullcord-top: 11rem;
   --pullcord-right: calc(100vw - var(--pullcord-left-offset) - 64px);
   --pullcord-z: 41;
   --pullcord-ink: color-mix(in oklab, var(--ink) 55%, transparent);
