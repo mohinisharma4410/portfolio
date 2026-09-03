@@ -45,8 +45,11 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  colorScheme: 'light',
-  themeColor: '#f2ead9',
+  colorScheme: 'light dark',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#f2ead9' },
+    { media: '(prefers-color-scheme: dark)', color: '#1c1912' },
+  ],
   userScalable: false,
 }
 
@@ -58,6 +61,15 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${caveat.variable} bg-background`}>
       <body className="cursor-none-desktop font-sans antialiased">
+        {/* Sets .dark/.light on <html> before first paint, from the saved
+            choice or the OS preference, so there's no flash of the wrong
+            theme while React hydrates. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(){try{var s=localStorage.getItem('theme');var d=s?s==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;var c=document.documentElement.classList;c.toggle('dark',d);c.toggle('light',!d);}catch(e){}})()",
+          }}
+        />
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>

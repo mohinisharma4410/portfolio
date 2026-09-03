@@ -8,6 +8,7 @@ import { Sections } from "@/components/overlay/sections"
 import { GrainOverlay } from "@/components/overlay/grain-overlay"
 import { Cursor } from "@/components/overlay/cursor"
 import { LoadingScreen } from "@/components/overlay/loading-screen"
+import { ThemeCord } from "@/components/overlay/theme-cord"
 
 export default function Page() {
   return (
@@ -21,6 +22,7 @@ export default function Page() {
       <Nav />
       <Sections />
       <Hud />
+      <ThemeCord />
       <GrainOverlay />
       <Cursor />
 

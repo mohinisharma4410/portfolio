@@ -17,6 +17,7 @@ const fragmentShader = /* glsl */ `
   uniform sampler2D uTex;
   uniform float uProgress;
   uniform float uTime;
+  uniform float uDark;
   varying vec2 vUv;
 
   float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
@@ -64,6 +65,9 @@ const fragmentShader = /* glsl */ `
     float front = smoothstep(uProgress - 0.02, uProgress, base) * (1.0 - smoothstep(uProgress, uProgress + 0.06, base));
     color = mix(color, color * 0.82, front * 0.6);
 
+    // dimmed under the studio lights being off — keeps hue, just darker
+    color *= mix(1.0, 0.62, uDark);
+
     float alpha = tex.a * clamp(mask, 0.0, 1.0);
     if (alpha < 0.01) discard;
     gl_FragColor = vec4(color, alpha);
@@ -98,18 +102,23 @@ function wobblyRect(w: number, h: number, jitter: number, seed: number) {
   return pts
 }
 
+const MAT_COLOR = { light: "#efe7d4", dark: "#221e17" }
+const FRAME_COLOR = { light: "#2a2622", dark: "#d8d0bd" }
+
 export function FramedIllustration({
   image,
   position,
   rotationY = 0,
   maxHeight = 5.2,
   stationZ,
+  dark = false,
 }: {
   image: string
   position: [number, number, number]
   rotationY?: number
   maxHeight?: number
   stationZ: number
+  dark?: boolean
 }) {
   const texture = useTexture(image)
   const matRef = useRef<THREE.ShaderMaterial>(null)
@@ -125,6 +134,7 @@ export function FramedIllustration({
       uTex: { value: texture },
       uProgress: { value: 0 },
       uTime: { value: 0 },
+      uDark: { value: dark ? 1 : 0 },
     }),
     [texture],
   )
@@ -138,13 +148,18 @@ export function FramedIllustration({
     [width, height],
   )
 
-  useFrame((state) => {
+  useFrame((state, delta) => {
     const camZ = state.camera.position.z
     const distance = camZ - stationZ
     const reveal = 1 - THREE.MathUtils.smoothstep(distance, 5.5, 17)
     if (matRef.current) {
       matRef.current.uniforms.uProgress.value = THREE.MathUtils.clamp(reveal, 0, 1)
       matRef.current.uniforms.uTime.value = state.clock.elapsedTime
+      matRef.current.uniforms.uDark.value = THREE.MathUtils.lerp(
+        matRef.current.uniforms.uDark.value,
+        dark ? 1 : 0,
+        Math.min(1, delta * 3),
+      )
     }
   })
 
@@ -153,7 +168,7 @@ export function FramedIllustration({
       {/* paper mat behind the illustration */}
       <mesh position={[0, 0, -0.02]}>
         <planeGeometry args={[width + 0.7, height + 0.7]} />
-        <meshBasicMaterial color="#efe7d4" />
+        <meshBasicMaterial color={dark ? MAT_COLOR.dark : MAT_COLOR.light} />
       </mesh>
       <mesh>
         <planeGeometry args={[width, height]} />
@@ -165,8 +180,8 @@ export function FramedIllustration({
           transparent
         />
       </mesh>
-      <Line points={frameOuter} color="#2a2622" lineWidth={1.4} />
-      <Line points={frameInner} color="#2a2622" lineWidth={0.8} transparent opacity={0.55} />
+      <Line points={frameOuter} color={dark ? FRAME_COLOR.dark : FRAME_COLOR.light} lineWidth={1.4} />
+      <Line points={frameInner} color={dark ? FRAME_COLOR.dark : FRAME_COLOR.light} lineWidth={0.8} transparent opacity={0.55} />
     </group>
   )
 }

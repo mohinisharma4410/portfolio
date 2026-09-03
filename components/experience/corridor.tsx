@@ -10,6 +10,15 @@ const LENGTH = CAMERA_START_Z - CAMERA_END_Z + 30
 const CENTER_Z = (CAMERA_START_Z + CAMERA_END_Z) / 2
 const HALF_W = 9
 
+/** Light vs. dark tints for the paper walls/floor/ceiling and sketch lines —
+ *  same warm "hand-drawn paper" family, just inverted for a dark studio. */
+const SURFACE_TINTS = {
+  light: { floor: "#eadfc8", ceiling: "#f4eddd", wallLeft: "#f0e7d3", wallRight: "#ece2cc" },
+  dark: { floor: "#242019", ceiling: "#2a251d", wallLeft: "#282319", wallRight: "#231f18" },
+}
+const GUIDE_COLOR = { light: "#c9bda2", dark: "#5c5546" }
+const PROP_COLOR = { light: "#3a352d", dark: "#c9c2b0" }
+
 /** Repeating paper surface used on floor and walls. */
 function PaperSurface({
   size,
@@ -42,7 +51,7 @@ function PaperSurface({
 }
 
 /** A faint sketched baseboard / ceiling guide line running the corridor. */
-function GuideLine({ y, x }: { y: number; x: number }) {
+function GuideLine({ y, x, dark }: { y: number; x: number; dark: boolean }) {
   const pts = useMemo(() => {
     const arr: [number, number, number][] = []
     const steps = 60
@@ -57,10 +66,20 @@ function GuideLine({ y, x }: { y: number; x: number }) {
     }
     return arr
   }, [x, y])
-  return <Line points={pts} color="#c9bda2" lineWidth={0.8} transparent opacity={0.6} />
+  return (
+    <Line
+      points={pts}
+      color={dark ? GUIDE_COLOR.dark : GUIDE_COLOR.light}
+      lineWidth={0.8}
+      transparent
+      opacity={0.6}
+    />
+  )
 }
 
-export function Corridor() {
+export function Corridor({ dark = false }: { dark?: boolean }) {
+  const tint = dark ? SURFACE_TINTS.dark : SURFACE_TINTS.light
+
   return (
     <group>
       {/* floor */}
@@ -69,7 +88,7 @@ export function Corridor() {
         position={[0, -3.2, CENTER_Z]}
         rotation={[-Math.PI / 2, 0, 0]}
         repeat={[6, 26]}
-        tint="#eadfc8"
+        tint={tint.floor}
       />
       {/* back ceiling wash */}
       <PaperSurface
@@ -77,7 +96,7 @@ export function Corridor() {
         position={[0, 7.5, CENTER_Z]}
         rotation={[Math.PI / 2, 0, 0]}
         repeat={[6, 26]}
-        tint="#f4eddd"
+        tint={tint.ceiling}
       />
       {/* left wall */}
       <PaperSurface
@@ -85,7 +104,7 @@ export function Corridor() {
         position={[-HALF_W, 2, CENTER_Z]}
         rotation={[0, Math.PI / 2, 0]}
         repeat={[26, 4]}
-        tint="#f0e7d3"
+        tint={tint.wallLeft}
       />
       {/* right wall */}
       <PaperSurface
@@ -93,13 +112,13 @@ export function Corridor() {
         position={[HALF_W, 2, CENTER_Z]}
         rotation={[0, -Math.PI / 2, 0]}
         repeat={[26, 4]}
-        tint="#ece2cc"
+        tint={tint.wallRight}
       />
 
-      <GuideLine y={-3.05} x={-HALF_W + 0.05} />
-      <GuideLine y={-3.05} x={HALF_W - 0.05} />
-      <GuideLine y={6.4} x={-HALF_W + 0.05} />
-      <GuideLine y={6.4} x={HALF_W - 0.05} />
+      <GuideLine y={-3.05} x={-HALF_W + 0.05} dark={dark} />
+      <GuideLine y={-3.05} x={HALF_W - 0.05} dark={dark} />
+      <GuideLine y={6.4} x={-HALF_W + 0.05} dark={dark} />
+      <GuideLine y={6.4} x={HALF_W - 0.05} dark={dark} />
     </group>
   )
 }
@@ -111,12 +130,14 @@ export function FloatingProp({
   scale = 1,
   speed = 0.2,
   pointer,
+  dark = false,
 }: {
   position: [number, number, number]
   geometry: "torus" | "box" | "octa" | "cone" | "dodeca"
   scale?: number
   speed?: number
   pointer: React.RefObject<{ x: number; y: number }>
+  dark?: boolean
 }) {
   const ref = useRef<THREE.Group>(null)
   const base = useMemo(() => new THREE.Vector3(...position), [position])
@@ -157,7 +178,7 @@ export function FloatingProp({
     <group ref={ref} position={position} scale={scale}>
       <lineSegments>
         <primitive object={edges} attach="geometry" />
-        <lineBasicMaterial color="#3a352d" transparent opacity={0.55} />
+        <lineBasicMaterial color={dark ? PROP_COLOR.dark : PROP_COLOR.light} transparent opacity={0.55} />
       </lineSegments>
     </group>
   )
